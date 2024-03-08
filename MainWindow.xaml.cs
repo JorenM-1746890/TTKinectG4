@@ -24,11 +24,21 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private SkeletonPoint currentSkeletonPoint;
         private List<SkeletonPoint> listOfSkeletonPoints = new List<SkeletonPoint>();
         private List<Point> calibrationPoints = new List<Point>();
+        private PartialCalibrationClass partialCalibrationClass;
+        private bool calibrated = false;
+        List<Brush> brushes = new List<Brush>();
+
 
         public MainWindow()
         {
             InitializeComponent();
             circle(10, 10, 100, 100, myCanvas, Brushes.Red);
+            brushes.Add(Brushes.Blue);
+            brushes.Add(Brushes.Red);
+            brushes.Add(Brushes.Green);
+            brushes.Add(Brushes.Orange);
+            brushes.Add(Brushes.Teal);
+            brushes.Add(Brushes.Black);
             findCentreOfGravityForKinect();
         }
 
@@ -83,24 +93,50 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private void SensorSkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             Skeleton[] skeletons = new Skeleton[0];
+            Point[] points = new Point[0];
 
             using (SkeletonFrame skeletonFrame = e.OpenSkeletonFrame())
             {
                 if (skeletonFrame != null)
                 {
                     skeletons = new Skeleton[skeletonFrame.SkeletonArrayLength];
+                    points = new Point[skeletons.Length];
                     skeletonFrame.CopySkeletonDataTo(skeletons);
                 }
             }
 
-            foreach (Skeleton skeleton in skeletons)
+            if (calibrated)
             {
-                if (skeleton.Position.X != 0 && skeleton.Position.Y != 0)
+                int counter = 0;
+                myCanvas.Children.Clear();
+                
+                foreach (Skeleton skeleton in skeletons)
                 {
-                    currentSkeletonPoint = skeleton.Position;
-                    circle((int)(750/2 + skeleton.Position.X * 200), (int)(750/2 +  skeleton.Position.Y * 200), 100, 100, myCanvas, Brushes.Green);
+                    counter++;
+                    if (skeleton.Position.X != 0 && skeleton.Position.Y != 0)
+                    {
+                        currentSkeletonPoint = skeleton.Position;
+                        if (partialCalibrationClass != null)
+                        {
+                            points[counter-1] = partialCalibrationClass.kinectToProjectionPoint(currentSkeletonPoint);
+
+                            circle((int)points[counter-1].X, (int)points[counter-1].Y, 100, 100, myCanvas, brushes[counter-1]);
+                        }
+                    }
                 }
             }
+            else
+            {
+                foreach (Skeleton skeleton in skeletons)
+                {
+                    if (skeleton.Position.X != 0 && skeleton.Position.Y != 0)
+                    {
+                        currentSkeletonPoint = skeleton.Position;
+                        circle((int)(750 / 2 + skeleton.Position.X * 200), (int)(750 / 2 + skeleton.Position.Y * 200), 100, 100, myCanvas, Brushes.Green);
+                    }
+                }
+            }
+            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -141,8 +177,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
             else
             {
-                PartialCalibrationClass partialCalibrationClass = new PartialCalibrationClass(kinectSensor, calibrationPoints, listOfSkeletonPoints);
+                partialCalibrationClass = new PartialCalibrationClass(kinectSensor, calibrationPoints, listOfSkeletonPoints);
                 partialCalibrationClass.calibrate();
+                calibrated = true;
             }
         }
     }

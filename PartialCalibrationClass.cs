@@ -93,7 +93,7 @@ namespace Microsoft.Samples.Kinect.ControlsBasics
             return new Point3D(imgPt.X, imgPt.Y, imgPt.Depth);
         }
 
-        private Point kinectToProjectionPoint(SkeletonPoint point)
+        public Point kinectToProjectionPoint(SkeletonPoint point)
         {
             DepthImagePoint depthP = m_kinectSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(point, DepthImageFormat.Resolution640x480Fps30);
             Point3D p = new Point3D(depthP.X, depthP.Y, depthP.Depth);
