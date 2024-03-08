@@ -20,12 +20,14 @@ namespace Microsoft.Samples.Kinect.ControlsBasics
         private Matrix3D m_groundPlaneTransform; //step 2 transform
         private Emgu.CV.Matrix<double> m_transform; //step 3 transform
 
-        public PartialCalibrationClass()
+        public PartialCalibrationClass(KinectSensor kinectSensor, List<Point> calibPoints, List<SkeletonPoint> skeletonPoints)
         {
-
+            m_kinectSensor = kinectSensor;
+            m_calibPoints = calibPoints;
+            m_skeletonCalibPoints = skeletonPoints;
         }
 
-        private void calibrate()
+        public void calibrate()
         {
             if (m_skeletonCalibPoints.Count == m_calibPoints.Count)
             {
@@ -77,6 +79,10 @@ namespace Microsoft.Samples.Kinect.ControlsBasics
                 Point tResult1 = kinectToProjectionPoint(m_skeletonCalibPoints[1]);
                 Point tResult2 = kinectToProjectionPoint(m_skeletonCalibPoints[2]);
                 Point tResult3 = kinectToProjectionPoint(m_skeletonCalibPoints[3]);
+                MessageBox.Show($"First point: {tResult0.X} {tResult0.Y}");
+                MessageBox.Show($"Second point: {tResult1.X} {tResult1.Y}");
+                MessageBox.Show($"Third point: {tResult2.X} {tResult2.Y}");
+                MessageBox.Show($"Fourth point: {tResult3.X} {tResult3.Y}");
             }
         }
 
