@@ -6,6 +6,7 @@
 
 namespace Microsoft.Samples.Kinect.SkeletonBasics
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Windows;
@@ -27,6 +28,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private PartialCalibrationClass partialCalibrationClass;
         private bool calibrated = false;
         List<Brush> brushes = new List<Brush>();
+        static HandsUpGesture handsUpGesture = new HandsUpGesture();
 
 
         public MainWindow()
@@ -77,6 +79,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                 // Add an event handler to be called whenever there is new color frame data
                 this.kinectSensor.SkeletonFrameReady += this.SensorSkeletonFrameReady;
+                handsUpGesture.GestureRecognized += HandsUpGestureRecognized;
 
                 // Start the sensor!
                 try
@@ -123,6 +126,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                             circle((int)points[counter-1].X, (int)points[counter-1].Y, 100, 100, myCanvas, brushes[counter-1]);
                         }
                     }
+
+                    // check handsup gesture
+                    handsUpGesture.Update(skeleton);
                 }
             }
             else
@@ -181,6 +187,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 partialCalibrationClass.calibrate();
                 calibrated = true;
             }
+        }
+
+        static void HandsUpGestureRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("HANDS UP billyReady");
         }
     }
 }
