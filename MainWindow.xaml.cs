@@ -24,12 +24,13 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     public partial class MainWindow : Window
     {
         private KinectSensor kinectSensor;
-        private SkeletonPoint currentSkeletonPoint;
+        private SkeletonPoint currentSkeletonPoint, lFeetSkeleton, rFeetSkeleton;
         private List<SkeletonPoint> listOfSkeletonPoints = new List<SkeletonPoint>();
         private List<Point> calibrationPoints = new List<Point>();
         private PartialCalibrationClass partialCalibrationClass;
         private bool calibrated = false;
         List<Brush> brushes = new List<Brush>();
+        static HandsUpGesture handsUpGesture = new HandsUpGesture();
 
         public MainWindow()
         {
@@ -79,6 +80,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                 // Add an event handler to be called whenever there is new color frame data
                 this.kinectSensor.SkeletonFrameReady += this.SensorSkeletonFrameReady;
+                handsUpGesture.GestureRecognized += HandsUpGestureRecognized;
 
                 // Start the sensor!
                 try
@@ -96,6 +98,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         {
             Skeleton[] skeletons = new Skeleton[0];
             Point[] points = new Point[0];
+            Point[] lFeet = new Point[0];
+            Point[] rFeet = new Point[0];
+
 
             using (SkeletonFrame skeletonFrame = e.OpenSkeletonFrame())
             {
@@ -103,6 +108,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 {
                     skeletons = new Skeleton[skeletonFrame.SkeletonArrayLength];
                     points = new Point[skeletons.Length];
+                    lFeet = new Point[skeletons.Length];
+                    rFeet = new Point[skeletons.Length];
                     skeletonFrame.CopySkeletonDataTo(skeletons);
                 }
             }
@@ -118,13 +125,22 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     if (skeleton.Position.X != 0 && skeleton.Position.Y != 0)
                     {
                         currentSkeletonPoint = skeleton.Position;
+                        lFeetSkeleton = skeleton.Joints[JointType.FootLeft].Position;
+                        rFeetSkeleton = skeleton.Joints[JointType.FootRight].Position;
                         if (partialCalibrationClass != null)
                         {
-                            points[counter - 1] = partialCalibrationClass.kinectToProjectionPoint(currentSkeletonPoint);
+                            points[counter-1] = partialCalibrationClass.kinectToProjectionPoint(currentSkeletonPoint);
+                            lFeet[counter - 1] = partialCalibrationClass.kinectToProjectionPoint(lFeetSkeleton);
+                            rFeet[counter - 1] = partialCalibrationClass.kinectToProjectionPoint(rFeetSkeleton);
 
-                            circle((int)points[counter - 1].X, (int)points[counter - 1].Y, 50, 50, myCanvas, brushes[counter - 1]);
+                            circle((int)points[counter-1].X, (int)points[counter-1].Y, 100, 100, myCanvas, brushes[counter-1]);
+                            circle((int)lFeet[counter - 1].X, (int)lFeet[counter - 1].Y, 20, 20, myCanvas, brushes[counter - 1]);
+                            circle((int)rFeet[counter - 1].X, (int)rFeet[counter - 1].Y, 20, 20, myCanvas, brushes[counter - 1]);
                         }
                     }
+
+                    // check handsup gesture
+                    handsUpGesture.Update(skeleton);
                 }
             }
             else
@@ -184,7 +200,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 calibrated = true;
                 gameArea.Visibility = Visibility.Visible;
             }
+        }
 
+        static void HandsUpGestureRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("HANDS UP billyReady");
         }
     }
 }
