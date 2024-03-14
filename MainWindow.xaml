@@ -28,10 +28,10 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
-                    <Button Grid.Column="1" FontSize="45" FontWeight="Bold">^</Button>
-                    <Button Grid.Row="1" FontSize="45" FontWeight="Bold">&lt;</Button>
-                    <Button Grid.Column="2" Grid.Row="1" FontSize="45" FontWeight="Bold">></Button>
-                    <Button Grid.Column="1" Grid.Row="2" FontSize="45" FontWeight="Bold">v</Button>
+                    <Button Grid.Column="1" FontSize="45" FontWeight="Bold" Name="Up1">^</Button>
+                    <Button Grid.Row="1" FontSize="45" FontWeight="Bold" Name="Left1">&lt;</Button>
+                    <Button Grid.Column="2" Grid.Row="1" FontSize="45" FontWeight="Bold" Name="Right1">></Button>
+                    <Button Grid.Column="1" Grid.Row="2" FontSize="45" FontWeight="Bold" Name="Down1">v</Button>
                 </Grid>
                 <Grid Grid.Row="2" Grid.Column="2" Margin="50 10" x:Name="gridPlayerTwo">
                     <Grid.ColumnDefinitions>
@@ -44,10 +44,10 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
-                    <Button Grid.Column="1" FontSize="45" FontWeight="Bold">^</Button>
-                    <Button Grid.Row="1" FontSize="45" FontWeight="Bold">&lt;</Button>
-                    <Button Grid.Column="2" Grid.Row="1" FontSize="45" FontWeight="Bold">></Button>
-                    <Button Grid.Column="1" Grid.Row="2" FontSize="45" FontWeight="Bold">v</Button>
+                    <Button Grid.Column="1" FontSize="45" FontWeight="Bold" Name="Up2">^</Button>
+                    <Button Grid.Row="1" FontSize="45" FontWeight="Bold" Name="Left2">&lt;</Button>
+                    <Button Grid.Column="2" Grid.Row="1" FontSize="45" FontWeight="Bold" Name="Right2">></Button>
+                    <Button Grid.Column="1" Grid.Row="2" FontSize="45" FontWeight="Bold" Name="Down2">v</Button>
                 </Grid>
             </Grid>
         </StackPanel>

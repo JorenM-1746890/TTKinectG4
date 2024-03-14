@@ -79,10 +79,6 @@ namespace Microsoft.Samples.Kinect.ControlsBasics
                 Point tResult1 = kinectToProjectionPoint(m_skeletonCalibPoints[1]);
                 Point tResult2 = kinectToProjectionPoint(m_skeletonCalibPoints[2]);
                 Point tResult3 = kinectToProjectionPoint(m_skeletonCalibPoints[3]);
-                MessageBox.Show($"First point: {tResult0.X} {tResult0.Y}");
-                MessageBox.Show($"Second point: {tResult1.X} {tResult1.Y}");
-                MessageBox.Show($"Third point: {tResult2.X} {tResult2.Y}");
-                MessageBox.Show($"Fourth point: {tResult3.X} {tResult3.Y}");
             }
         }
 
