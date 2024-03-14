@@ -8,15 +8,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.IO;
-    using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Shapes;
     using Microsoft.Kinect;
     using Microsoft.Samples.Kinect.ControlsBasics;
+    using System.Windows.Media.Imaging;
+    using System.Windows.Threading;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -32,6 +32,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         List<Brush> brushes = new List<Brush>();
         static HandsUpGesture handsUpGesture = new HandsUpGesture();
         private DateTime timeSinceGesture = DateTime.Now;
+        private DispatcherTimer timer;
+        private Random random;
 
         public MainWindow()
         {
@@ -44,6 +46,53 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             brushes.Add(Brushes.Teal);
             brushes.Add(Brushes.Black);
             findCentreOfGravityForKinect();
+            
+            random = new Random();
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(2);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            testCanvas.Children.Clear();
+
+            int randomNumber = random.Next(0, 4);
+            string path = "";
+
+            switch (randomNumber)
+            {
+                case 0:
+                    path = "Images\\up.png";
+                    break;
+                case 1:
+                    path = "Images\\right.png";
+                    break;
+                case 2:
+                    path = "Images\\down.png";
+                    break;
+                case 3:
+                    path = "Images\\left.png";
+                    break;
+                default:
+                    break;
+            }
+
+            Image image = new Image()
+            {
+                Width = 140,
+                Height = 140,
+                Source = new BitmapImage(new Uri(path, UriKind.Relative))
+            };
+
+            testCanvas.Children.Add(image);
+
+            image.SetValue(Canvas.LeftProperty, 290.0);
+            image.SetValue(Canvas.TopProperty, 10.0);
+
+            Console.WriteLine("The image was drawn");
         }
 
         private static void circle(int x, int y, int width, int height, Canvas cv, Brush color)
@@ -157,7 +206,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     
                     Button buttonLFoot = CheckButtons((int)lFeet[counter - 1].X, (int)lFeet[counter - 1].Y);
                     Button buttonRFoot = CheckButtons((int)rFeet[counter - 1].X, (int)rFeet[counter - 1].Y);
-
                 }
             }
             else
