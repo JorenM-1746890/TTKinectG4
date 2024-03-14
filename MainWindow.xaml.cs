@@ -150,6 +150,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             Point[] points = new Point[0];
             Point[] lFeet = new Point[0];
             Point[] rFeet = new Point[0];
+            DateTime currentTime = DateTime.Now;
+            TimeSpan currTS = new TimeSpan(currentTime.Ticks);
+            TimeSpan gestTS = new TimeSpan(timeSinceGesture.Ticks);
+            double timeDiff = currTS.Subtract(gestTS).TotalMilliseconds;
 
 
             using (SkeletonFrame skeletonFrame = e.OpenSkeletonFrame())
@@ -168,10 +172,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 int counter = 0;
                 myCanvas.Children.Clear();
-                DateTime currentTime = DateTime.Now;
-                TimeSpan currTS = new TimeSpan(currentTime.Ticks);
-                TimeSpan gestTS = new TimeSpan(timeSinceGesture.Ticks);
-                double timeDiff = currTS.Subtract(gestTS).TotalMilliseconds;
+                
 
                 foreach (Skeleton skeleton in skeletons)
                 {
@@ -216,6 +217,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     {
                         currentSkeletonPoint = skeleton.Position;
                         circle((int)(750 / 2 + skeleton.Position.X * 200), (int)(750 / 2 + skeleton.Position.Y * 200), 100, 100, myCanvas, Brushes.Green);
+
+                        // check handsup gesture
+                        if (timeDiff > 1000.0)
+                        {
+                            if (handsUpGesture.Update(skeleton))
+                            {
+                                Button_Click(this, new RoutedEventArgs());
+                                timeSinceGesture = DateTime.Now;
+                            }
+                        }
                     }
                 }
             }
