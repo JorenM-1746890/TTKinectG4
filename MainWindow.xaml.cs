@@ -6,8 +6,11 @@
 
 namespace Microsoft.Samples.Kinect.SkeletonBasics
 {
+    using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
+    using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
@@ -27,7 +30,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private PartialCalibrationClass partialCalibrationClass;
         private bool calibrated = false;
         List<Brush> brushes = new List<Brush>();
-
 
         public MainWindow()
         {
@@ -109,7 +111,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 int counter = 0;
                 myCanvas.Children.Clear();
-                
+
                 foreach (Skeleton skeleton in skeletons)
                 {
                     counter++;
@@ -118,9 +120,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         currentSkeletonPoint = skeleton.Position;
                         if (partialCalibrationClass != null)
                         {
-                            points[counter-1] = partialCalibrationClass.kinectToProjectionPoint(currentSkeletonPoint);
+                            points[counter - 1] = partialCalibrationClass.kinectToProjectionPoint(currentSkeletonPoint);
 
-                            circle((int)points[counter-1].X, (int)points[counter-1].Y, 100, 100, myCanvas, brushes[counter-1]);
+                            circle((int)points[counter - 1].X, (int)points[counter - 1].Y, 50, 50, myCanvas, brushes[counter - 1]);
                         }
                     }
                 }
@@ -136,7 +138,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     }
                 }
             }
-            
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -151,19 +153,19 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 switch (amountOfPoints)
                 {
                     case 0:
+                        circle((int)myCanvas.Width - 100 - 10, 10, 100, 100, myCanvas, Brushes.Red);
                         calibrationPoints.Add(new Point(10 + 50, 10 + 50));
                         break;
                     case 1:
-                        circle(750 - 100 - 10, 10, 100, 100, myCanvas, Brushes.Red);
-                        calibrationPoints.Add(new Point(750 - 100 - 10 + 50, 10 + 50));
+                        circle((int)myCanvas.Width - 100 - 10, (int)myCanvas.Height - 100 - 10, 100, 100, myCanvas, Brushes.Red);
+                        calibrationPoints.Add(new Point((int)myCanvas.Width - 100 - 10 + 50, 10 + 50));
                         break;
                     case 2:
-                        circle(750 - 100 - 10, 750 - 100 - 10, 100, 100, myCanvas, Brushes.Red);
-                        calibrationPoints.Add(new Point(750 - 100 - 10 + 50, 750 - 100 - 10 + 50));
+                        circle(10, (int)myCanvas.Height - 100 - 10, 100, 100, myCanvas, Brushes.Red);
+                        calibrationPoints.Add(new Point((int)myCanvas.Width - 100 - 10 + 50, (int)myCanvas.Height - 100 - 10 + 50));
                         break;
                     case 3:
-                        circle(10, 750 - 100 - 10, 100, 100, myCanvas, Brushes.Red);
-                        calibrationPoints.Add(new Point(10 + 50, 750 - 100 - 10 + 50));
+                        calibrationPoints.Add(new Point(10 + 50, (int)myCanvas.Height - 100 - 10 + 50));
                         break;
                     default:
                         break;
@@ -180,7 +182,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 partialCalibrationClass = new PartialCalibrationClass(kinectSensor, calibrationPoints, listOfSkeletonPoints);
                 partialCalibrationClass.calibrate();
                 calibrated = true;
+                gameArea.Visibility = Visibility.Visible;
             }
+
         }
     }
 }
