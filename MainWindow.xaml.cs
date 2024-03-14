@@ -161,6 +161,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                     // check handsup gesture
                     handsUpGesture.Update(skeleton);
+                    Button buttonLFoot = CheckButtons((int)lFeet[counter - 1].X, (int)lFeet[counter - 1].Y);
+                    Button buttonRFoot = CheckButtons((int)rFeet[counter - 1].X, (int)rFeet[counter - 1].Y);
+
                 }
             }
             else
@@ -206,12 +209,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     default:
                         break;
                 }
-
-
-                MessageBox.Show($"Current point: {amountOfPoints}/4. " +
-                    $"\n x: {currentSkeletonPoint.X}" +
-                    $"\n y: {currentSkeletonPoint.Y}" +
-                    $"\n z: {currentSkeletonPoint.Z}");
             }
             else
             {
@@ -225,6 +222,55 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         static void HandsUpGestureRecognized(object sender, EventArgs e)
         {
             Console.WriteLine("HANDS UP billyReady");
+        }
+
+        public Button CheckButtons(int x, int y)
+        {
+            Point up1 = Up1.TransformToAncestor(this).Transform(new Point(0, 0));
+            Point up2 = Up2.TransformToAncestor(this).Transform(new Point(0, 0));
+            Point left1 = Left1.TransformToAncestor(this).Transform(new Point(0, 0));
+            Point left2 = Left2.TransformToAncestor(this).Transform(new Point(0, 0));
+            Point right1 = Right1.TransformToAncestor(this).Transform(new Point(0, 0));
+            Point right2 = Right2.TransformToAncestor(this).Transform(new Point(0, 0));
+            Point down1 = Down1.TransformToAncestor(this).Transform(new Point(0, 0));
+            Point down2 = Down2.TransformToAncestor(this).Transform(new Point(0, 0));
+
+            if (x >= up1.X && x <= up1.X + Up1.Width && y >= up1.Y && y <= up1.Y + Up1.Height)
+            {
+                return Up1;
+            }
+            else if (x >= up2.X && x <= up2.X + Up2.Width && y >= up2.Y && y <= up2.Y + Up2.Height)
+            {
+                return Up2;
+            }
+            else if (x >= left1.X && x <= left1.X + Left1.Width && y >= left1.Y && y <= left1.Y + Left1.Height)
+            {
+                return Left1;
+            }
+            else if (x >= left2.X && x <= left2.X + Left2.Width && y >= left2.Y && y <= left2.Y + Left2.Height)
+            {
+                return Left2;
+            }
+            else if (x >= right1.X && x <= right1.X + Right1.Width && y >= right1.Y && y <= right1.Y + Right1.Height)
+            {
+                return Right1;
+            }
+            else if (x >= right2.X && x <= right2.X + Right2.Width && y >= right2.Y && y <= right2.Y + Right2.Height)
+            {
+                return Right2;
+            }
+            else if (x >= down1.X && x <= down1.X + Down1.Width && y >= down1.Y && y <= down1.Y + Down1.Height)
+            {
+                return Down1;
+            }
+            else if (x >= down2.X && x <= down2.X + Down2.Width && y >= down2.Y && y <= down2.Y + Down2.Height)
+            {
+                return Down2;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
