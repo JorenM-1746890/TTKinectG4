@@ -31,6 +31,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private bool calibrated = false;
         List<Brush> brushes = new List<Brush>();
         static HandsUpGesture handsUpGesture = new HandsUpGesture();
+        private DateTime timeSinceGesture = DateTime.Now;
 
         public MainWindow()
         {
@@ -118,6 +119,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 int counter = 0;
                 myCanvas.Children.Clear();
+                DateTime currentTime = DateTime.Now;
+                TimeSpan currTS = new TimeSpan(currentTime.Ticks);
+                TimeSpan gestTS = new TimeSpan(timeSinceGesture.Ticks);
+                double timeDiff = currTS.Subtract(gestTS).TotalMilliseconds;
 
                 foreach (Skeleton skeleton in skeletons)
                 {
@@ -140,7 +145,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     }
 
                     // check handsup gesture
-                    handsUpGesture.Update(skeleton);
+                    if (timeDiff > 1000.0)
+                    {
+                        
+                        if (handsUpGesture.Update(skeleton))
+                        {
+                            Console.WriteLine(timeDiff);
+                            timeSinceGesture = DateTime.Now;
+                        }
+                    }
+                    
                     Button buttonLFoot = CheckButtons((int)lFeet[counter - 1].X, (int)lFeet[counter - 1].Y);
                     Button buttonRFoot = CheckButtons((int)rFeet[counter - 1].X, (int)rFeet[counter - 1].Y);
 
