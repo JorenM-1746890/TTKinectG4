@@ -15,7 +15,9 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
-                <Button>Button 1</Button>
+                <Canvas Background="red" Name="testCanvas">
+                    
+                </Canvas>
                 <Button Grid.Column="2">Button 3</Button>
                 <Grid Grid.Row="2" Margin="50 10" Name="gridPlayerOne">
                     <Grid.ColumnDefinitions>

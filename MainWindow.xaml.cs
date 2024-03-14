@@ -15,6 +15,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Shapes;
+    using System.Timers;
     using Microsoft.Kinect;
     using Microsoft.Samples.Kinect.ControlsBasics;
 
@@ -31,6 +32,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private bool calibrated = false;
         List<Brush> brushes = new List<Brush>();
         static HandsUpGesture handsUpGesture = new HandsUpGesture();
+        private static Timer aTimer;
 
         public MainWindow()
         {
@@ -43,6 +45,24 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             brushes.Add(Brushes.Teal);
             brushes.Add(Brushes.Black);
             findCentreOfGravityForKinect();
+
+            // Create a timer and set a two second interval.
+            aTimer = new System.Timers.Timer();
+            aTimer.Interval = 2000;
+
+            // Hook up the Elapsed event for the timer. 
+            aTimer.Elapsed += OnTimedEvent;
+
+            // Have the timer fire repeated events (true is the default)
+            aTimer.AutoReset = true;
+
+            // Start the timer
+            aTimer.Enabled = true;
+        }
+
+        private static void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            Console.WriteLine("The Elapsed event was raised at {0}", e.SignalTime); ;
         }
 
         private static void circle(int x, int y, int width, int height, Canvas cv, Brush color)
