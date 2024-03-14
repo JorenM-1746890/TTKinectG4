@@ -8,16 +8,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.IO;
-    using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Shapes;
-    using System.Timers;
     using Microsoft.Kinect;
     using Microsoft.Samples.Kinect.ControlsBasics;
+    using System.Windows.Media.Imaging;
+    using System.Windows.Threading;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -32,7 +31,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private bool calibrated = false;
         List<Brush> brushes = new List<Brush>();
         static HandsUpGesture handsUpGesture = new HandsUpGesture();
-        private static Timer aTimer;
+        private DispatcherTimer timer;
+        private Random random;
 
         public MainWindow()
         {
@@ -45,24 +45,53 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             brushes.Add(Brushes.Teal);
             brushes.Add(Brushes.Black);
             findCentreOfGravityForKinect();
+            
+            random = new Random();
 
-            // Create a timer and set a two second interval.
-            aTimer = new System.Timers.Timer();
-            aTimer.Interval = 2000;
-
-            // Hook up the Elapsed event for the timer. 
-            aTimer.Elapsed += OnTimedEvent;
-
-            // Have the timer fire repeated events (true is the default)
-            aTimer.AutoReset = true;
-
-            // Start the timer
-            aTimer.Enabled = true;
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(2);
+            timer.Tick += Timer_Tick;
+            timer.Start();
         }
 
-        private static void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
-            Console.WriteLine("The Elapsed event was raised at {0}", e.SignalTime); ;
+            testCanvas.Children.Clear();
+
+            int randomNumber = random.Next(0, 4);
+            string path = "";
+
+            switch (randomNumber)
+            {
+                case 0:
+                    path = "Images\\up.png";
+                    break;
+                case 1:
+                    path = "Images\\right.png";
+                    break;
+                case 2:
+                    path = "Images\\down.png";
+                    break;
+                case 3:
+                    path = "Images\\left.png";
+                    break;
+                default:
+                    break;
+            }
+
+            Image image = new Image()
+            {
+                Width = 140,
+                Height = 140,
+                Source = new BitmapImage(new Uri(path, UriKind.Relative))
+            };
+
+            testCanvas.Children.Add(image);
+
+            image.SetValue(Canvas.LeftProperty, 290.0);
+            image.SetValue(Canvas.TopProperty, 10.0);
+
+            Console.WriteLine("The image was drawn");
         }
 
         private static void circle(int x, int y, int width, int height, Canvas cv, Brush color)
@@ -163,7 +192,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     handsUpGesture.Update(skeleton);
                     Button buttonLFoot = CheckButtons((int)lFeet[counter - 1].X, (int)lFeet[counter - 1].Y);
                     Button buttonRFoot = CheckButtons((int)rFeet[counter - 1].X, (int)rFeet[counter - 1].Y);
-
                 }
             }
             else

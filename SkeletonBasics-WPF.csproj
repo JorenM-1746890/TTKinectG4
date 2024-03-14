@@ -179,6 +179,16 @@
       <Version>4.8.1.5350</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\down.png" />
+    <Resource Include="Images\down_filled.png" />
+    <Resource Include="Images\left.png" />
+    <Resource Include="Images\left_filled.png" />
+    <Resource Include="Images\right.png" />
+    <Resource Include="Images\right_filled.png" />
+    <Resource Include="Images\up.png" />
+    <Resource Include="Images\up_filled.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
