@@ -75,16 +75,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             for (int i = 0; i < lFeet.Length; i++)
             {
-                if (CheckButtons((int)lFeet[i].X, (int)lFeet[i].Y) == p1Buttons[currentMoves.Peek()] || CheckButtons((int)rFeet[i].X, (int)rFeet[i].Y) == p1Buttons[currentMoves.Peek()])
+                if (CheckButtons((int)lFeet[i].X, (int)lFeet[i].Y).Name == (p1Buttons[currentMoves.Peek()]).Name || CheckButtons((int)rFeet[i].X, (int)rFeet[i].Y).Name == (p1Buttons[currentMoves.Peek()]).Name)
                 {
                     p1Score += 100;
                 }
-                if (CheckButtons((int)lFeet[i].X, (int)lFeet[i].Y) == p2Buttons[currentMoves.Peek()] || CheckButtons((int)rFeet[i].X, (int)rFeet[i].Y) == p2Buttons[currentMoves.Peek()])
+                if (CheckButtons((int)lFeet[i].X, (int)lFeet[i].Y).Equals(p2Buttons[currentMoves.Peek()]) || CheckButtons((int)rFeet[i].X, (int)rFeet[i].Y).Equals(p2Buttons[currentMoves.Peek()]))
                 {
                     p2Score += 100;
                 }
             }
-            Console.WriteLine($"p1: {p1Score}\np2: {p2Score}");
             // tot hier :)
 
             int randomNumber = random.Next(0, 4);
@@ -335,41 +334,44 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             Point down1 = Down1.TransformToAncestor(this).Transform(new Point(0, 0));
             Point down2 = Down2.TransformToAncestor(this).Transform(new Point(0, 0));
 
-            if (x >= up1.X && x <= up1.X + Up1.Width && y >= up1.Y && y <= up1.Y + Up1.Height)
+            Button badButton = new Button();
+            badButton.Content = "fake";
+
+            if (x >= up1.X - 50 && x <= up1.X + 50 + Up1.Width && y >= up1.Y - 50 && y <= up1.Y + 50 + Up1.Height)
             {
                 return Up1;
             }
-            else if (x >= up2.X && x <= up2.X + Up2.Width && y >= up2.Y && y <= up2.Y + Up2.Height)
+            else if (x >= up2.X - 50 && x <= up2.X + 50 + Up2.Width && y >= up2.Y - 50 && y <= up2.Y + 50 + Up2.Height)
             {
                 return Up2;
             }
-            else if (x >= left1.X && x <= left1.X + Left1.Width && y >= left1.Y && y <= left1.Y + Left1.Height)
+            else if (x >= left1.X - 50 && x <= left1.X + 50 + Left1.Width && y >= left1.Y - 50 && y <= left1.Y + 50 + Left1.Height)
             {
                 return Left1;
             }
-            else if (x >= left2.X && x <= left2.X + Left2.Width && y >= left2.Y && y <= left2.Y + Left2.Height)
+            else if (x >= left2.X - 50 && x <= left2.X + 50 + Left2.Width && y >= left2.Y - 50 && y <= left2.Y + 50 + Left2.Height)
             {
                 return Left2;
             }
-            else if (x >= right1.X && x <= right1.X + Right1.Width && y >= right1.Y && y <= right1.Y + Right1.Height)
+            else if (x >= right1.X - 50 && x <= right1.X + 50 + Right1.Width && y >= right1.Y - 50 && y <= right1.Y + 50 + Right1.Height)
             {
                 return Right1;
             }
-            else if (x >= right2.X && x <= right2.X + Right2.Width && y >= right2.Y && y <= right2.Y + Right2.Height)
+            else if (x >= right2.X - 50 && x <= right2.X + 50 + Right2.Width && y >= right2.Y - 50 && y <= right2.Y + 50 + Right2.Height)
             {
                 return Right2;
             }
-            else if (x >= down1.X && x <= down1.X + Down1.Width && y >= down1.Y && y <= down1.Y + Down1.Height)
+            else if (x >= down1.X - 50 && x <= down1.X + 50 + Down1.Width && y >= down1.Y - 50 && y <= down1.Y + 50 + Down1.Height)
             {
                 return Down1;
             }
-            else if (x >= down2.X && x <= down2.X + Down2.Width && y >= down2.Y && y <= down2.Y + Down2.Height)
+            else if (x >= down2.X - 50 && x <= down2.X + 50 + Down2.Width && y >= down2.Y - 50 && y <= down2.Y + 50 + Down2.Height)
             {
                 return Down2;
             }
             else
             {
-                return null;
+                return badButton;
             }
         }
     }
