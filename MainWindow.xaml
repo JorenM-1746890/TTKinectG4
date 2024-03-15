@@ -6,7 +6,7 @@
         <ImageBrush ImageSource="/Images/ddrBG.png" Stretch="Fill"/>
     </Window.Background>
     <StackPanel>
-        <StackPanel x:Name="gameArea" Visibility="Visible">
+        <StackPanel x:Name="gameArea" Visibility="Hidden">
             <Grid ShowGridLines="True" Width="1600" Height="750" x:Name="gridMain">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="10*" />

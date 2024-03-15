@@ -38,11 +38,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private Queue<int> currentMoves = new Queue<int>();
         string soundFilePath = "C:\\Users\\devin\\OneDrive\\Documents\\UHasselt_Master1\\Tools and Technologies for Interactive Systems Development\\Kinect Project\\TTKinectG4\\Sounds\\sea_shanty_2_remix.mp3";
         MediaPlayer mediaPlayer = new MediaPlayer();
+        private int p1Score = 0;
+        private int p2Score = 0;
+        Point[] lFeet = new Point[0];
+        Point[] rFeet = new Point[0];
 
         public MainWindow()
         {
             InitializeComponent();
-            circle(10, 10, 100, 100, myCanvas, Brushes.Red);
+            circle(10, 10, 100, 100, myCanvas, Brushes.White);
             brushes.Add(Brushes.Blue);
             brushes.Add(Brushes.Red);
             brushes.Add(Brushes.Green);
@@ -52,19 +56,36 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             findCentreOfGravityForKinect();
             
             random = new Random();
-            currentMoves.Enqueue(5);
-            currentMoves.Enqueue(5);
-            currentMoves.Enqueue(5);
+            currentMoves.Enqueue(4);
+            currentMoves.Enqueue(4);
+            currentMoves.Enqueue(4);
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(2);
             timer.Tick += Timer_Tick;
-            timer.Start();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
             testCanvas.Children.Clear();
+
+            // check for score
+            Button[] p1Buttons = new Button[] { Left1, Up1, Down1, Right1, new Button() };
+            Button[] p2Buttons = new Button[] { Left2, Up2, Down2, Right2, new Button() };
+
+            for (int i = 0; i < lFeet.Length; i++)
+            {
+                if (CheckButtons((int)lFeet[i].X, (int)lFeet[i].Y) == p1Buttons[currentMoves.Peek()] || CheckButtons((int)rFeet[i].X, (int)rFeet[i].Y) == p1Buttons[currentMoves.Peek()])
+                {
+                    p1Score += 100;
+                }
+                if (CheckButtons((int)lFeet[i].X, (int)lFeet[i].Y) == p2Buttons[currentMoves.Peek()] || CheckButtons((int)rFeet[i].X, (int)rFeet[i].Y) == p2Buttons[currentMoves.Peek()])
+                {
+                    p2Score += 100;
+                }
+            }
+            Console.WriteLine($"p1: {p1Score}\np2: {p2Score}");
+            // tot hier :)
 
             int randomNumber = random.Next(0, 4);
             if (currentMoves.Count >= 3)
@@ -75,11 +96,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             drawBoard(currentMoves.ToArray());
 
-            
-
-            
-            
-
+                    
         }
 
         private void drawBoard(int[] moves)
@@ -176,8 +193,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         {
             Skeleton[] skeletons = new Skeleton[0];
             Point[] points = new Point[0];
-            Point[] lFeet = new Point[0];
-            Point[] rFeet = new Point[0];
             DateTime currentTime = DateTime.Now;
             TimeSpan currTS = new TimeSpan(currentTime.Ticks);
             TimeSpan gestTS = new TimeSpan(timeSinceGesture.Ticks);
@@ -200,6 +215,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 int counter = 0;
                 myCanvas.Children.Clear();
+                timer.Start();
+
 
                 mediaPlayer.Open(new Uri(soundFilePath));
                 mediaPlayer.Play();
@@ -210,8 +227,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     if (skeleton.Position.X != 0 && skeleton.Position.Y != 0)
                     {
                         currentSkeletonPoint = skeleton.Position;
-                        lFeetSkeleton = skeleton.Joints[JointType.FootLeft].Position;
-                        rFeetSkeleton = skeleton.Joints[JointType.FootRight].Position;
+                        lFeetSkeleton = skeleton.Joints[JointType.AnkleLeft].Position;
+                        rFeetSkeleton = skeleton.Joints[JointType.AnkleRight].Position;
                         if (partialCalibrationClass != null)
                         {
                             points[counter-1] = partialCalibrationClass.kinectToProjectionPoint(currentSkeletonPoint);
@@ -275,15 +292,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 switch (amountOfPoints)
                 {
                     case 0:
-                        circle((int)myCanvas.Width - 100 - 10, 10, 100, 100, myCanvas, Brushes.Red);
+                        circle((int)myCanvas.Width - 100 - 10, 10, 100, 100, myCanvas, Brushes.White);
                         calibrationPoints.Add(new Point(10 + 50, 10 + 50));
                         break;
                     case 1:
-                        circle((int)myCanvas.Width - 100 - 10, (int)myCanvas.Height - 100 - 10, 100, 100, myCanvas, Brushes.Red);
+                        circle((int)myCanvas.Width - 100 - 10, (int)myCanvas.Height - 100 - 10, 100, 100, myCanvas, Brushes.White);
                         calibrationPoints.Add(new Point((int)myCanvas.Width - 100 - 10 + 50, 10 + 50));
                         break;
                     case 2:
-                        circle(10, (int)myCanvas.Height - 100 - 10, 100, 100, myCanvas, Brushes.Red);
+                        circle(10, (int)myCanvas.Height - 100 - 10, 100, 100, myCanvas, Brushes.White);
                         calibrationPoints.Add(new Point((int)myCanvas.Width - 100 - 10 + 50, (int)myCanvas.Height - 100 - 10 + 50));
                         break;
                     case 3:
