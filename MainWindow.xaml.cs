@@ -33,16 +33,19 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private bool calibrated = false;
         List<Brush> brushes = new List<Brush>();
         static HandsUpGesture handsUpGesture = new HandsUpGesture();
+        static ClapGesture clapGesture = new ClapGesture();
         private DateTime timeSinceGesture = DateTime.Now;
         private DispatcherTimer timer;
         private Random random;
         private Queue<int> currentMoves = new Queue<int>();
-        string soundFilePath = "C:\\Users\\devin\\OneDrive\\Documents\\UHasselt_Master1\\Tools and Technologies for Interactive Systems Development\\Kinect Project\\TTKinectG4\\Sounds\\sea_shanty_2_remix.mp3";
+        //string soundFilePath = "C:\\Users\\devin\\OneDrive\\Documents\\UHasselt_Master1\\Tools and Technologies for Interactive Systems Development\\Kinect Project\\TTKinectG4\\Sounds\\sea_shanty_2_remix.mp3";
+        string soundFilePath = "D:\\School2\\TTKinectG4\\Sounds\\sea_shanty_2_remix.mp3";
         MediaPlayer mediaPlayer = new MediaPlayer();
         private int p1Score = 0;
         private int p2Score = 0;
         Point[] lFeet = new Point[0];
         Point[] rFeet = new Point[0];
+        bool timerRunning = false;
 
         public MainWindow()
         {
@@ -62,8 +65,12 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             currentMoves.Enqueue(4);
 
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(2);
+            timer.Interval = TimeSpan.FromMilliseconds(((170.0 / 4.0) / 60.0) * 1000.0);
             timer.Tick += Timer_Tick;
+
+            mediaPlayer.Open(new Uri(soundFilePath));
+            mediaPlayer.Play();
+            mediaPlayer.Pause();
         }
 
         public int P1Score
@@ -103,13 +110,13 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             for (int i = 0; i < lFeet.Length; i++)
             {
-                if (CheckButtons((int)lFeet[i].X, (int)lFeet[i].Y).Name == (p1Buttons[currentMoves.Peek()]).Name || CheckButtons((int)rFeet[i].X, (int)rFeet[i].Y).Name == (p1Buttons[currentMoves.Peek()]).Name)
+                if (CheckButtons((int)lFeet[i].X, (int)lFeet[i].Y).Equals(p1Buttons[currentMoves.Peek()]) || CheckButtons((int)rFeet[i].X, (int)rFeet[i].Y).Equals(p1Buttons[currentMoves.Peek()]))
                 {
-                    p1Score += 100;
+                    P1Score += 100;
                 }
                 if (CheckButtons((int)lFeet[i].X, (int)lFeet[i].Y).Equals(p2Buttons[currentMoves.Peek()]) || CheckButtons((int)rFeet[i].X, (int)rFeet[i].Y).Equals(p2Buttons[currentMoves.Peek()]))
                 {
-                    p2Score += 100;
+                    P2Score += 100;
                 }
             }
             // tot hier :)
@@ -203,6 +210,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 // Add an event handler to be called whenever there is new color frame data
                 this.kinectSensor.SkeletonFrameReady += this.SensorSkeletonFrameReady;
                 handsUpGesture.GestureRecognized += HandsUpGestureRecognized;
+                clapGesture.ClapRecognized += ClapGestureRecognized;
 
                 // Start the sensor!
                 try
@@ -242,11 +250,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 int counter = 0;
                 myCanvas.Children.Clear();
-                timer.Start();
-
-
-                mediaPlayer.Open(new Uri(soundFilePath));
-                mediaPlayer.Play();
 
                 foreach (Skeleton skeleton in skeletons)
                 {
@@ -272,10 +275,22 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     if (timeDiff > 1000.0)
                     {
                         
-                        if (handsUpGesture.Update(skeleton))
+                        if (clapGesture.Update(skeleton))
                         {
                             Console.WriteLine(timeDiff);
                             timeSinceGesture = DateTime.Now;
+                            if (!timerRunning)
+                            {
+                                timer.Start();
+                                mediaPlayer.Play();
+                                timerRunning = true;
+                            }
+                            else
+                            {
+                                timer.Stop();
+                                mediaPlayer.Pause();
+                                timerRunning = false;
+                            }
                         }
                     }
                     
@@ -351,6 +366,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             Console.WriteLine("HANDS UP billyReady");
         }
 
+        static void ClapGestureRecognized(object sender, EventArgs e)
+        {
+            Console.WriteLine("HYPERCLAP aniki");
+        }
+
         public Button CheckButtons(int x, int y)
         {
             Point up1 = Up1.TransformToAncestor(this).Transform(new Point(0, 0));
@@ -363,37 +383,37 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             Point down2 = Down2.TransformToAncestor(this).Transform(new Point(0, 0));
 
             Button badButton = new Button();
-            badButton.Content = "fake";
+            badButton.Name = "fake";
 
-            if (x >= up1.X - 50 && x <= up1.X + 50 + Up1.Width && y >= up1.Y - 50 && y <= up1.Y + 50 + Up1.Height)
+            if (x >= up1.X - 50 && x <= up1.X + 50 + Up1.ActualWidth && y >= up1.Y - 50 && y <= up1.Y + 50 + Up1.ActualHeight)
             {
                 return Up1;
             }
-            else if (x >= up2.X - 50 && x <= up2.X + 50 + Up2.Width && y >= up2.Y - 50 && y <= up2.Y + 50 + Up2.Height)
+            else if (x >= up2.X - 50 && x <= up2.X + 50 + Up2.ActualWidth && y >= up2.Y - 50 && y <= up2.Y + 50 + Up2.ActualHeight)
             {
                 return Up2;
             }
-            else if (x >= left1.X - 50 && x <= left1.X + 50 + Left1.Width && y >= left1.Y - 50 && y <= left1.Y + 50 + Left1.Height)
+            else if (x >= left1.X - 50 && x <= left1.X + 50 + Left1.ActualWidth && y >= left1.Y - 50 && y <= left1.Y + 50 + Left1.ActualHeight)
             {
                 return Left1;
             }
-            else if (x >= left2.X - 50 && x <= left2.X + 50 + Left2.Width && y >= left2.Y - 50 && y <= left2.Y + 50 + Left2.Height)
+            else if (x >= left2.X - 50 && x <= left2.X + 50 + Left2.ActualWidth && y >= left2.Y - 50 && y <= left2.Y + 50 + Left2.ActualHeight)
             {
                 return Left2;
             }
-            else if (x >= right1.X - 50 && x <= right1.X + 50 + Right1.Width && y >= right1.Y - 50 && y <= right1.Y + 50 + Right1.Height)
+            else if (x >= right1.X - 50 && x <= right1.X + 50 + Right1.ActualWidth && y >= right1.Y - 50 && y <= right1.Y + 50 + Right1.ActualHeight)
             {
                 return Right1;
             }
-            else if (x >= right2.X - 50 && x <= right2.X + 50 + Right2.Width && y >= right2.Y - 50 && y <= right2.Y + 50 + Right2.Height)
+            else if (x >= right2.X - 50 && x <= right2.X + 50 + Right2.ActualWidth && y >= right2.Y - 50 && y <= right2.Y + 50 + Right2.ActualHeight)
             {
                 return Right2;
             }
-            else if (x >= down1.X - 50 && x <= down1.X + 50 + Down1.Width && y >= down1.Y - 50 && y <= down1.Y + 50 + Down1.Height)
+            else if (x >= down1.X - 50 && x <= down1.X + 50 + Down1.ActualWidth && y >= down1.Y - 50 && y <= down1.Y + 50 + Down1.ActualHeight)
             {
                 return Down1;
             }
-            else if (x >= down2.X - 50 && x <= down2.X + 50 + Down2.Width && y >= down2.Y - 50 && y <= down2.Y + 50 + Down2.Height)
+            else if (x >= down2.X - 50 && x <= down2.X + 50 + Down2.ActualWidth && y >= down2.Y - 50 && y <= down2.Y + 50 + Down2.ActualHeight)
             {
                 return Down2;
             }

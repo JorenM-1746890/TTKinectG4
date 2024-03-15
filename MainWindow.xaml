@@ -19,10 +19,10 @@
                     <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
                 <StackPanel>
-                    <TextBlock Text="{Binding P1Score}" FontSize="20"/>
+                    <TextBlock Text="{Binding P1Score}" FontSize="80" Foreground="White"/>
                 </StackPanel>
                 <StackPanel Grid.Column="2">
-                    <TextBlock Text="{Binding P2Score}" FontSize="20"/>
+                    <TextBlock Text="{Binding P2Score}" FontSize="80" Foreground="White"/>
                 </StackPanel>
                 <StackPanel Name="test">
                     <Canvas Background="red" Name="testCanvas">
