@@ -17,6 +17,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using Microsoft.Samples.Kinect.ControlsBasics;
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
+    using System.Reflection;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -35,6 +36,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private DispatcherTimer timer;
         private Random random;
         private Queue<int> currentMoves = new Queue<int>();
+        string soundFilePath = "C:\\Users\\devin\\OneDrive\\Documents\\UHasselt_Master1\\Tools and Technologies for Interactive Systems Development\\Kinect Project\\TTKinectG4\\Sounds\\sea_shanty_2_remix.mp3";
+        MediaPlayer mediaPlayer = new MediaPlayer();
 
         public MainWindow()
         {
@@ -197,7 +200,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 int counter = 0;
                 myCanvas.Children.Clear();
-                
+
+                mediaPlayer.Open(new Uri(soundFilePath));
+                mediaPlayer.Play();
 
                 foreach (Skeleton skeleton in skeletons)
                 {
