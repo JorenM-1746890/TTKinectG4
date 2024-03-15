@@ -34,6 +34,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private DateTime timeSinceGesture = DateTime.Now;
         private DispatcherTimer timer;
         private Random random;
+        private Queue<int> currentMoves = new Queue<int>();
 
         public MainWindow()
         {
@@ -48,6 +49,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             findCentreOfGravityForKinect();
             
             random = new Random();
+            currentMoves.Enqueue(5);
+            currentMoves.Enqueue(5);
+            currentMoves.Enqueue(5);
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(2);
@@ -60,39 +64,60 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             testCanvas.Children.Clear();
 
             int randomNumber = random.Next(0, 4);
-            string path = "";
-
-            switch (randomNumber)
+            if (currentMoves.Count >= 3)
             {
-                case 0:
-                    path = "Images\\up.png";
-                    break;
-                case 1:
-                    path = "Images\\right.png";
-                    break;
-                case 2:
-                    path = "Images\\down.png";
-                    break;
-                case 3:
-                    path = "Images\\left.png";
-                    break;
-                default:
-                    break;
+                currentMoves.Dequeue();
             }
+            currentMoves.Enqueue(randomNumber);
 
-            Image image = new Image()
+            drawBoard(currentMoves.ToArray());
+
+            
+
+            
+            
+
+        }
+
+        private void drawBoard(int[] moves)
+        {
+            string[] images = new string[] { "Images\\left.png", "Images\\up.png", "Images\\down.png" , "Images\\right.png" };
+            string[] filledImages = new string[] { "Images\\left_filled.png", "Images\\up_filled.png", "Images\\down_filled.png", "Images\\right_filled.png" };
+            for (int i = 0; i < moves.Length; i++)
             {
-                Width = 140,
-                Height = 140,
-                Source = new BitmapImage(new Uri(path, UriKind.Relative))
-            };
-
-            testCanvas.Children.Add(image);
-
-            image.SetValue(Canvas.LeftProperty, 290.0);
-            image.SetValue(Canvas.TopProperty, 10.0);
-
-            Console.WriteLine("The image was drawn");
+                for (int j = 0; j < 4; j++)
+                {
+                    string boardPath = "";
+                    if (moves[i] == j)
+                    {
+                        boardPath = filledImages[j];
+                    }
+                    else
+                    {
+                        boardPath = images[j];
+                    }
+                    Image image = new Image()
+                    {
+                        Width = 140,
+                        Height = 140,
+                        Source = new BitmapImage(new Uri(boardPath, UriKind.Relative))
+                    };
+                    // TODO 120 is hard coded
+                    image.SetValue(Canvas.LeftProperty, j*140.0 + 120);
+                    image.SetValue(Canvas.TopProperty, (moves.Length - i - 1) *140.0);
+                    testCanvas.Children.Add(image);
+                    Image image2 = new Image()
+                    {
+                        Width = 140,
+                        Height = 140,
+                        Source = new BitmapImage(new Uri(boardPath, UriKind.Relative))
+                    };
+                    image2.SetValue(Canvas.LeftProperty, j * 140.0 + 120 + 800);
+                    image2.SetValue(Canvas.TopProperty, (moves.Length - i - 1) * 140.0);
+                    testCanvas.Children.Add(image2);
+                }
+            }
+            
         }
 
         private static void circle(int x, int y, int width, int height, Canvas cv, Brush color)
@@ -102,7 +127,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 Width = width,
                 Height = height,
-                Stroke = color,
+                Stroke = Brushes.Black,
                 Fill = color,
             };
 
