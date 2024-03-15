@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Microsoft.Samples.Kinect.SkeletonBasics.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Devin Devin Revolution" Height="900" Width="1700">
+        Title="Devin Devin Revolution" Height="900" Width="1700" DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Window.Background>
         <ImageBrush ImageSource="/Images/ddrBG.png" Stretch="Fill"/>
     </Window.Background>
@@ -18,6 +18,12 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{Binding P1Score}" FontSize="20"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="{Binding P2Score}" FontSize="20"/>
+                </StackPanel>
                 <StackPanel Name="test">
                     <Canvas Background="red" Name="testCanvas">
 

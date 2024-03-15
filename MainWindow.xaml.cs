@@ -18,11 +18,12 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
     using System.Reflection;
+    using System.ComponentModel;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private KinectSensor kinectSensor;
         private SkeletonPoint currentSkeletonPoint, lFeetSkeleton, rFeetSkeleton;
@@ -63,6 +64,33 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(2);
             timer.Tick += Timer_Tick;
+        }
+
+        public int P1Score
+        {
+            get { return p1Score; }
+            set
+            {
+                p1Score = value;
+                OnPropertyChanged(nameof(P1Score));
+            }
+        }
+
+        public int P2Score
+        {
+            get { return p2Score; }
+            set
+            {
+                p2Score = value;
+                OnPropertyChanged(nameof(P2Score));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void Timer_Tick(object sender, EventArgs e)
